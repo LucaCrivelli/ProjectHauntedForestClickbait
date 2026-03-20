@@ -1,0 +1,19 @@
+# Cartelle temporanee di Unreal
+Binaries/*
+DerivedDataCache/*
+Intermediate/*
+Saved/*
+Build/*
+
+# File di progetto dell'utente
+.vscode
+.vs
+*.sln
+*.suo
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.opendb
+
+# Log e crash
+*.log
