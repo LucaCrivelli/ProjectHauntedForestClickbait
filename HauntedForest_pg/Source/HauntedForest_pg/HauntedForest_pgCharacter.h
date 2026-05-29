@@ -13,11 +13,19 @@ class UInputComponent;
 class USkeletalMeshComponent;
 class UCameraComponent;
 class UInputAction;
-class UFlashLightComponent;        // AGGIUNTO
-class UInputMappingContext;        // AGGIUNTO
-class ADoorActor; //Aggiunto dopo
-class UUserWidget; //Aggiunto dopo
+class UFlashLightComponent;
+class UInputMappingContext;
+class ADoorActor;
+class UUserWidget;
+class AMapActor;
 struct FInputActionValue;
+class UPauseUserWidget; // menu di pausa
+class UDeathUserWidget; // menu di morte
+class AParanormalPhenomenon; // per progerssi di gioco
+class URecordingUserWidget; // per barra di caricamento
+
+class AMonsterSpawner;
+class USoundBase;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -86,7 +94,6 @@ protected:
 	UFUNCTION(BlueprintCallable, Category = "Input")
 	virtual void DoJumpEnd();
 
-	//Aggiunto dopo
 	// INTERACT (porta)
 	UPROPERTY(EditAnywhere, Category = "Input")
 	UInputAction* InteractAction;
@@ -101,6 +108,74 @@ protected:
 
 	UPROPERTY()
 	UUserWidget* InteractWidget;
+
+	// per mappa
+	UPROPERTY()
+	AMapActor* CurrentMap = nullptr;
+
+	// usare la  seguente variabile impedisce un BUG
+	UPROPERTY()
+	AMapActor* OpenedMap = nullptr;
+
+	//per menu di pausa
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<UPauseUserWidget> PauseWidgetClass;
+
+	UPROPERTY()
+	UPauseUserWidget* PauseWidget;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* PauseAction;
+
+	void TogglePauseMenu();
+
+
+	//per menu di morte
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<UDeathUserWidget> DeathWidgetClass;
+
+	UPROPERTY()
+	UDeathUserWidget* DeathWidget;
+
+	// Filmaggio
+
+	UPROPERTY()
+	AParanormalPhenomenon* CurrentPhenomenon;
+
+	float RecordingTime = 0.f;
+
+	float LostSightTime = 0.f;
+
+	UPROPERTY(EditAnywhere, Category = "Recording")
+	float MaxLostSightTime = 0.5f;
+
+	// UI barra di caricamento
+	UPROPERTY(EditAnywhere, Category = "UI")
+	TSubclassOf<URecordingUserWidget> RecordingWidgetClass;
+
+	UPROPERTY()
+	URecordingUserWidget* RecordingWidget;
+
+	// Per finale gioco
+	UPROPERTY(EditAnywhere, Category = "Paranormal")
+	int32 TotalPhenomena = 3;
+
+	UPROPERTY(VisibleAnywhere, Category = "Paranormal")
+	int32 CapturedPhenomena = 0;
+
+	UPROPERTY(EditAnywhere, Category = "Paranormal")
+	AParanormalPhenomenon* FinalPhenomenon;
+
+	UPROPERTY(EditAnywhere, Category = "Paranormal")
+	AActor* FinalEventPoint;
+
+	bool bFinalEventStarted = false;
+
+	UPROPERTY(EditAnywhere, Category = "Audio")
+	USoundBase* FinalEventSound;
+
+	UPROPERTY(EditAnywhere, Category = "Paranormal")
+	AMonsterSpawner* MonsterSpawner;
 
 protected:
 
@@ -137,6 +212,14 @@ private:
 public:
 	// Metodo da chiamare la pressione del tasto "F"
 	void ToggleFlashlight();
+
+	//metodo che si collega al mostro
+	void KillPlayer();
+
+	// per finale gioco
+	void StartFinalEvent();
+
+	void TriggerEnding();
 
 
 	// [ CODICE RELATIVO AL FLASH ]

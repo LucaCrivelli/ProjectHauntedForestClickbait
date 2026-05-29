@@ -4,10 +4,11 @@
 #include "TimerManager.h"
 #include "Engine/TargetPoint.h" //per spawnpoint
 
-// Include necessario
+// per area sicura
 #include "Engine/TriggerVolume.h"
 
 // per audio quando l'entita appare
+#include "Kismet/GameplayStatics.h"
 #include "Sound/SoundBase.h"
 
 AMonsterSpawner::AMonsterSpawner()
@@ -32,14 +33,25 @@ void AMonsterSpawner::SpawnMonster()
 {
     APawn* Player = UGameplayStatics::GetPlayerPawn(GetWorld(), 0);
 
+    // no spawn zone
+    for (ATriggerVolume* Volume : NoSpawnVolumes)
+    {
+        if (Volume && Volume->IsOverlappingActor(Player))
+        {
+            return; // blocca spawn
+        }
+    }
+
     // safe zone check
     if (EscapeVolume && EscapeVolume->IsOverlappingActor(Player))
     {
+        UE_LOG(LogTemp, Warning, TEXT("player in safezone"));
         return;
     }
 
     if (CurrentMonster && IsValid(CurrentMonster))
     {
+        UE_LOG(LogTemp, Warning, TEXT("Mostro esistente"));
         return;
     }
 
@@ -57,15 +69,21 @@ void AMonsterSpawner::SpawnMonster()
 
         if (Monster)
         {
+
             // Target player
             Monster->SetTarget(Player);
 
-            // PASSAGGIO DEL VOLUME (QUESTA È LA PARTE IMPORTANTE)
+            // aggiunto dopo BUG dello psawn del mostro
+            Monster->SetSpawner(this);
+
+            // Passaggio del Volume
             Monster->SetEscapeVolume(EscapeVolume);
+
+            Monster->SetSafeDoor(SafeDoor);
 
             CurrentMonster = Monster;
 
-            // SUONO DI SPAWN
+            // suono di spawn
             if (SpawnSound)
             {
                 UGameplayStatics::PlaySoundAtLocation(
@@ -75,5 +93,22 @@ void AMonsterSpawner::SpawnMonster()
                 );
             }
         }
+    }
+}
+
+// aggiunto dopo BUG safeDoor
+void AMonsterSpawner::NotifyMonsterDestroyed()
+{
+    CurrentMonster = nullptr;
+}
+
+// per finale gioco
+void AMonsterSpawner::StopSpawner()
+{
+    GetWorldTimerManager().ClearTimer(SpawnTimer);
+
+    if (CurrentMonster)
+    {
+        CurrentMonster->Destroy();
     }
 }

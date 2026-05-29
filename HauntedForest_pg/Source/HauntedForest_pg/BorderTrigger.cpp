@@ -36,10 +36,10 @@ void ABorderTrigger::OnOverlapBegin(AActor* OverlappedActor, AActor* OtherActor)
         {
             bIsProcessingOverlap = true; // Blocca il trigger
 
-            // 1. Inizia il Fade Nero (1.0 secondi)
+            // Inizia il Fade Nero (1.0 secondi)
             PC->PlayerCameraManager->StartCameraFade(0.0f, 1.0f, 1.0f, FLinearColor::Black, true, true);
 
-            // 2. Blocca input e AZZERA velocita (fondamentale per lo spostamento)
+            // Blocca input e AZZERA velocita (fondamentale per lo spostamento)
             PlayerCharacter->DisableInput(PC);
             PlayerCharacter->GetCharacterMovement()->StopMovementImmediately();
 
@@ -48,12 +48,12 @@ void ABorderTrigger::OnOverlapBegin(AActor* OverlappedActor, AActor* OtherActor)
                 {
                     if (PlayerCharacter && PC)
                     {
-                        // 1. Ruota la visuale di 180 (come prima)
+                        // Ruota la visuale di 180 (come prima)
                         FRotator NewRot = PC->GetControlRotation();
                         NewRot.Yaw += 180.0f;
                         PC->SetControlRotation(NewRot);
 
-                        // 2. RIPOSIZIONAMENTO PERPENDICOLARE
+                        // RIPOSIZIONAMENTO PERPENDICOLARE
                         // Invece di usare la direzione del player, usiamo la rotazione del TRIGGER stesso
                         // GetActorForwardVector() del Trigger punta "fuori" o "dentro" la faccia del muro
                         FVector TriggerForward = GetActorForwardVector();
@@ -62,10 +62,10 @@ void ABorderTrigger::OnOverlapBegin(AActor* OverlappedActor, AActor* OtherActor)
                         // lungo l'asse del Trigger, non quello del giocatore.
                         FVector NewLocation = PlayerCharacter->GetActorLocation() + (TriggerForward * 800.0f);
 
-                        // 3. Applichiamo lo spostamento
+                        // Applichiamo lo spostamento
                         PlayerCharacter->SetActorLocation(NewLocation, false, nullptr, ETeleportType::TeleportPhysics);
 
-                        // 4. Reset Fade e Input
+                        // Reset Fade e Input
                         PC->PlayerCameraManager->StartCameraFade(1.0f, 0.0f, 1.0f, FLinearColor::Black, false);
                         PlayerCharacter->EnableInput(PC);
 

@@ -41,5 +41,8 @@ public:
 
     bool bIsOpen;
 
+    //serve per passarlo al mostro per capire se la porta è chiusa
+    bool IsOpen() const { return bIsOpen; }
+
     void ToggleDoor();
 };

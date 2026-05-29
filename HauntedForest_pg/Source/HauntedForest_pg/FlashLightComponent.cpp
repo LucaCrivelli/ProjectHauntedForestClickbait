@@ -76,11 +76,3 @@ void UFlashLightComponent::DoFlash()
 		false
 	);
 }
-
-// Called every frame
-//void UFlashLightComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-//{
-//	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-//
-//	// ...
-//}

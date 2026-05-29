@@ -41,4 +41,16 @@ public:
     UPROPERTY(EditAnywhere, Category = "Audio")
     USoundBase* SpawnSound;
 
+    UPROPERTY(EditAnywhere, Category = "Spawning")
+    class ADoorActor* SafeDoor;
+
+    // per area che non fa apparire il mostro se il player è al suo interno
+    UPROPERTY(EditInstanceOnly, Category = "Spawning")
+    TArray<ATriggerVolume*> NoSpawnVolumes;
+
+    //aggiunto per BUG riscontrato di spawn del mostro
+    void NotifyMonsterDestroyed();
+
+    // per finale gioco
+    void StopSpawner();
 };
